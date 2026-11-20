@@ -1,0 +1,7 @@
+version: 2
+seeds:
+  - name: fixture_ernesto_forecast
+    description: >
+      NHC advisory 4 for Potential Tropical Cyclone Five (later Hurricane Ernesto), issued
+      11 AM AST 12 Aug 2024, read from tests/fixtures/al052024_5day_004.zip by step 3.
+      Used to prove the active-storm alert fires for a storm that did pass the USVI.

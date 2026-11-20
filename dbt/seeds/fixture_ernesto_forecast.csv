@@ -1,0 +1,10 @@
+storm_id,storm_name,advisory,issued_utc,tau_h,valid_utc,lat,lon,max_wind_kt,gust_kt,storm_type,development,fetched_utc
+al052024,Potential Tropical Cyclone Five,4,2024-08-12 15:00:00,0,2024-08-12 12:00:00,15.1,-55.6,30,40,STD,Subtropical Depression,2024-08-12 15:00:00
+al052024,Potential Tropical Cyclone Five,4,2024-08-12 15:00:00,12,2024-08-13 00:00:00,15.5,-58.8,35,45,STS,Subtropical Storm,2024-08-12 15:00:00
+al052024,Potential Tropical Cyclone Five,4,2024-08-12 15:00:00,24,2024-08-13 12:00:00,16.3,-62.2,35,45,TS,Tropical Storm,2024-08-12 15:00:00
+al052024,Potential Tropical Cyclone Five,4,2024-08-12 15:00:00,36,2024-08-14 00:00:00,17.3,-64.6,40,50,TS,Tropical Storm,2024-08-12 15:00:00
+al052024,Potential Tropical Cyclone Five,4,2024-08-12 15:00:00,48,2024-08-14 12:00:00,18.8,-66.4,45,55,TS,Tropical Storm,2024-08-12 15:00:00
+al052024,Potential Tropical Cyclone Five,4,2024-08-12 15:00:00,60,2024-08-15 00:00:00,20.5,-67.6,55,65,TS,Tropical Storm,2024-08-12 15:00:00
+al052024,Potential Tropical Cyclone Five,4,2024-08-12 15:00:00,72,2024-08-15 12:00:00,22.7,-68.2,65,80,HU,Hurricane,2024-08-12 15:00:00
+al052024,Potential Tropical Cyclone Five,4,2024-08-12 15:00:00,96,2024-08-16 12:00:00,27.0,-67.5,85,105,HU,Hurricane,2024-08-12 15:00:00
+al052024,Potential Tropical Cyclone Five,4,2024-08-12 15:00:00,120,2024-08-17 12:00:00,31.5,-65.0,95,115,HU,Hurricane,2024-08-12 15:00:00

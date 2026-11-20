@@ -1,0 +1,51 @@
+version: 2
+models:
+  - name: stg_storms
+    description: One row per Atlantic storm in HURDAT2
+    columns:
+      - name: storm_id
+        tests: [unique, not_null]
+      - name: season
+        tests: [not_null]
+  - name: stg_track_points
+    description: One row per best-track point
+    tests:
+      - unique_combination: {arguments: {columns: [storm_id, seq]}}
+    columns:
+      - name: storm_id
+        tests:
+          - relationships: {arguments: {to: ref('stg_storms'), field: storm_id}}
+      - name: lat
+        tests: [not_null]
+      - name: lon
+        tests: [not_null]
+      - name: status
+        tests:
+          - accepted_values:
+              arguments: {values: [HU, TS, TD, EX, SD, SS, LO, WV, DB]}
+  - name: stg_estates
+    description: Census 2020 counts joined to TIGER estate boundaries
+    columns:
+      - name: geoid
+        description: Missing if a Census table row found no boundary
+        tests: [unique, not_null]
+      - name: population
+        description: Missing if a boundary found no Census table row
+        tests: [not_null]
+      - name: housing_units
+        tests: [not_null]
+      - name: island
+        tests:
+          - accepted_values:
+              arguments: {values: [St. Croix, St. John, St. Thomas]}
+  - name: stg_island_totals
+    columns:
+      - name: island
+        tests: [unique]
+  - name: stg_active_forecast
+    tests:
+      - unique_combination: {arguments: {columns: [storm_id, advisory, tau_h]}}
+  - name: stg_source_health
+    columns:
+      - name: source
+        tests: [unique]

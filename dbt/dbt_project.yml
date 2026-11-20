@@ -1,0 +1,48 @@
+name: usvi_hurricanes
+version: "1.0.0"
+config-version: 2
+profile: usvi_hurricanes
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+models:
+  usvi_hurricanes:
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: table
+      +schema: intermediate
+    marts:
+      +materialized: table
+      +schema: marts
+
+seeds:
+  usvi_hurricanes:
+    +schema: reference
+    fixture_ernesto_forecast:
+      +column_types:
+        advisory: varchar
+        issued_utc: timestamp
+        valid_utc: timestamp
+        fetched_utc: timestamp
+
+vars:
+  # a storm "passes near" the territory when its centre comes within this many nautical
+  # miles of any estate (about the radius of hurricane-force winds in a typical hurricane)
+  near_nmi: 60
+  # storms whose centre comes within this distance are listed at all
+  listed_nmi: 150
+  # track points further than this from the territory are not interpolated
+  track_window_nmi: 400
+  # active storms: an advisory counts as current for this many hours after it is issued
+  advisory_fresh_h: 18
+  # alert when the forecast centre comes within this many nautical miles in 5 days
+  threat_nmi: 150
+  # collectors run every 3 hours; alert after this many failures in a row
+  max_consecutive_failures: 3
+  # the HURDAT2 file whose numbers are written up in the README; a newer one raises a notice
+  hurdat_reviewed: "hurdat2-1851-2025-092326.txt"

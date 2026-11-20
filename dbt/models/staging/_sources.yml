@@ -1,0 +1,18 @@
+version: 2
+sources:
+  - name: raw
+    schema: raw
+    description: Loaded unchanged from the Parquet lake by pipeline/step4_load.py
+    tables:
+      - name: hurdat_storms
+        description: One row per storm header in NOAA's HURDAT2 Atlantic best-track file
+      - name: hurdat_points
+        description: One row per best-track point (every 6 hours plus landfalls and peaks)
+      - name: census_counts
+        description: 2020 Census population (table 2) and housing units (table 4) by estate, with island totals
+      - name: estate_shapes
+        description: Census TIGER/Line 2023 estate boundaries and internal points
+      - name: active_forecast
+        description: Every NHC 5-day forecast point saved from CurrentStorms.json
+      - name: source_health
+        description: When each collector last worked

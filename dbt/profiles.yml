@@ -1,0 +1,7 @@
+usvi_hurricanes:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ../warehouse/hurricanes.duckdb
+      threads: 4

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>USVI Hurricane Exposure · Crucian Data Works</title>
+<meta name="description" content="Every hurricane and tropical storm that has passed the U.S. Virgin Islands since 1851, which estates their winds reached, and how many of today's residents live there, from NOAA's HURDAT2 and the 2020 Census. A Crucian Data Works portfolio project.">
+<link rel="icon" href="cdw-icon-app-tile.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="hurricane.css">
+</head>
+<body>
+<div class="demo-bar" role="note">
+  <span class="pill">Portfolio project 05</span>
+  <span>Built from NOAA National Hurricane Center and U.S. Census data. Not a forecast. For watches and warnings follow the <a href="https://www.nhc.noaa.gov/" target="_blank" rel="noopener">National Hurricane Center</a> and <a href="https://vitema.vi.gov/" target="_blank" rel="noopener">VITEMA</a>.</span>
+</div>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <div class="title">
+      <p class="eyebrow">U.S. Virgin Islands · Hurricane exposure</p>
+      <h1>Which storms reached which estates?</h1>
+      <p class="sub" id="updated">Loading…</p>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="alerts" aria-label="Alerts and active storms" id="alerts"></section>
+
+  <section class="kpis" aria-label="Key figures" id="kpis"></section>
+
+  <section class="card finding-card">
+    <p class="eyebrow">What the record shows</p>
+    <p class="big" id="finding"></p>
+    <div class="facts" id="facts"></div>
+  </section>
+
+  <section class="card">
+    <header class="card-h row">
+      <div><h2>Estate map</h2><p id="mapSub">Pick a measure, or a single storm to see its track and which estates its winds reached</p></div>
+      <label class="pick"><span class="sr">Show on the map</span><select id="mapPick" aria-label="Show on the map"></select></label>
+    </header>
+    <div class="grid map-row">
+      <div id="map" role="region" aria-label="Map of USVI estates"></div>
+      <aside class="side" id="side" aria-live="polite"></aside>
+    </div>
+  </section>
+
+  <section class="grid two">
+    <article class="card">
+      <header class="card-h"><h2>Storms passing near, by decade</h2><p>Centre within 60 nautical miles of an estate, by strength at closest approach</p></header>
+      <div class="chart"><canvas id="cDecades" aria-label="Storms passing near the USVI by decade"></canvas></div>
+      <p class="fine-inline">Before weather satellites (the 1960s) a storm that stayed at sea could go unrecorded, so early decades are a floor, not a full count.</p>
+    </article>
+    <article class="card">
+      <header class="card-h"><h2>How often?</h2><p>Storms passing within 60 nmi, and the share of years with at least one</p></header>
+      <div class="table-wrap">
+        <table class="tbl" id="tReturns">
+          <thead><tr><th>Strength</th><th class="n">Storms</th><th class="n">About once every</th><th class="n">Years with one</th><th>Most recent</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="toggle" role="group" aria-label="Period" id="retToggle">
+        <button data-k="1851" aria-pressed="true">Since 1851</button>
+        <button data-k="1950" aria-pressed="false">Since 1950</button>
+        <button data-k="2004" aria-pressed="false">Since 2004</button>
+      </div>
+    </article>
+  </section>
+
+  <section class="card">
+    <header class="card-h"><h2>Who was in the wind?</h2><p>2004 on, when NHC records how far each storm's winds reached · 2020 residents inside tropical-storm-force (34 kt), 50-knot and hurricane-force (64 kt) winds</p></header>
+    <div class="chart tall" id="cPopWrap"><canvas id="cPop" aria-label="Residents inside each storm's wind fields"></canvas></div>
+    <p class="fine-inline">Today's population is used for every storm, so each bar reads as "if this storm came again, who would be in its winds". Wind fields are NHC's estimates of the furthest extent in each quadrant, not measurements on land.</p>
+  </section>
+
+  <section class="card">
+    <header class="card-h row">
+      <div><h2>Every storm that passed near</h2><p>Centre within 60 nmi of an estate · strength is the storm's maximum sustained wind at closest approach</p></div>
+      <div class="toggle" role="group" aria-label="Storm filter" id="stormToggle">
+        <button data-k="hu" aria-pressed="true">Hurricanes</button>
+        <button data-k="all" aria-pressed="false">All storms</button>
+      </div>
+    </header>
+    <div class="table-wrap">
+      <table class="tbl" id="tStorms">
+        <thead><tr><th>Storm</th><th>Closest</th><th class="n">Passed</th><th>Strength then</th><th class="n">Residents in 64-kt winds</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="more-row"><button class="more" id="stormMore" type="button"></button></div>
+  </section>
+
+  <section class="card">
+    <header class="card-h row">
+      <div><h2>Estates</h2><p>All 416 Census estates · hurricanes passing within 60 nmi since 1851, and times inside hurricane-force winds since 2004</p></div>
+      <label class="pick"><span class="sr">Find an estate</span><input id="estSearch" type="search" placeholder="Find an estate" aria-label="Find an estate"></label>
+    </header>
+    <div class="table-wrap">
+      <table class="tbl" id="tEstates">
+        <thead><tr><th>Estate</th><th class="n">Residents</th><th class="n">Hurricanes near</th><th class="n">In 64-kt winds</th><th>Last time</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="more-row"><button class="more" id="estMore" type="button"></button></div>
+  </section>
+
+  <section class="card">
+    <header class="card-h"><h2>Read with care</h2><p>What these numbers can and cannot say</p></header>
+    <ul class="caveats">
+      <li><b>Early records are incomplete.</b> HURDAT2 starts in 1851, but before aircraft reconnaissance (1944) and satellites (1960s) storms were only known from ships and land. Counts before then are a minimum.</li>
+      <li><b>Wind fields only exist from 2004.</b> Before that HURDAT2 gives the centre and the strongest wind, not how far the winds reached, so older storms are measured by distance only.</li>
+      <li><b>Strength is the storm's, not the estate's.</b> "Strength then" is the storm's maximum sustained wind near its centre. Winds on a given hillside depend on the side of the storm, terrain and exposure.</li>
+      <li><b>2020 population for every storm.</b> Residents and housing units are from the 2020 Census and are applied to past storms as a measure of exposure today.</li>
+      <li><b>Wind is not the only hazard.</b> Rain, flooding, landslides and storm surge are not in this data.</li>
+    </ul>
+  </section>
+
+  <section class="card how" id="how">
+    <div>
+      <p class="eyebrow">How this was built</p>
+      <h2>Two public datasets, one tested model, refreshed every three hours</h2>
+      <p>NOAA's HURDAT2 database records every Atlantic storm's centre and strength every six hours since 1851. The pipeline fills each track in hour by hour, measures it against all 416 Census estates and, from 2004, checks which estates fell inside each storm's 34-, 50- and 64-knot wind radii by quadrant. During hurricane season it also reads the National Hurricane Center's live forecast for every active storm and opens a GitHub alert when one is forecast to pass within 150 nautical miles. Python lands the files into a Parquet lake, and DuckDB and dbt build every number on this page with tested SQL.</p>
+      <p class="finding" id="howFinding"></p>
+    </div>
+    <ol>
+      <li><b>1</b>Download the newest HURDAT2 release from NHC</li>
+      <li><b>2</b>Download Census 2020 estate counts and boundaries</li>
+      <li><b>3</b>Read NHC's active storms and forecast tracks</li>
+      <li><b>4</b>Load the lake into DuckDB</li>
+      <li><b>5</b>Model and test with dbt, including known storms</li>
+      <li><b>6</b>Export JSON for this page</li>
+      <li><b>7</b>Open, update or close alert issues on GitHub</li>
+    </ol>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <div class="brand">
+      <img src="cdw-icon-reverse.svg" alt="" width="36" height="36">
+      <div><b>Crucian Data Works</b><span>Data engineering from St. Croix</span></div>
+    </div>
+    <div class="contact">Roger Simon · <a href="mailto:hello@cruciandataworks.com">hello@cruciandataworks.com</a></div>
+  </div>
+  <p class="wrap fine">Data: storm tracks from NOAA National Hurricane Center <a href="https://www.nhc.noaa.gov/data/#hurdat" target="_blank" rel="noopener">HURDAT2</a> (<span id="hurdatFile"></span>); live forecasts from <a href="https://www.nhc.noaa.gov/gis/" target="_blank" rel="noopener">NHC GIS forecast tracks</a>; residents and housing units from the U.S. Census Bureau <a href="https://www.census.gov/data/tables/2020/dec/2020-us-virgin-islands.html" target="_blank" rel="noopener">2020 Census of the U.S. Virgin Islands</a>; estate boundaries from Census <a href="https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html" target="_blank" rel="noopener">TIGER/Line</a>. Map tiles © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. This page is an independent analysis. <span id="built"></span></p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

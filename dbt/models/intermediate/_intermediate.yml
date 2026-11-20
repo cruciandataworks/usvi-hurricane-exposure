@@ -1,0 +1,15 @@
+version: 2
+models:
+  - name: int_track_hourly
+    description: Best tracks filled in hour by hour near the territory
+    tests:
+      - unique_combination: {arguments: {columns: [storm_id, hour_utc]}}
+  - name: int_estate_storm
+    description: Closest approach and wind field, estate by storm
+    tests:
+      - unique_combination: {arguments: {columns: [geoid, storm_id]}}
+    columns:
+      - name: max_field_kt
+        tests:
+          - accepted_values:
+              arguments: {values: [0, 34, 50, 64]}

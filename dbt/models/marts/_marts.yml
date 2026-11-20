@@ -1,0 +1,31 @@
+version: 2
+models:
+  - name: mart_storms_near_usvi
+    description: Storms whose centre came within listed_nmi of an estate
+    columns:
+      - name: storm_id
+        tests: [unique, not_null]
+      - name: closest_nmi
+        tests: [not_null]
+  - name: mart_decade_counts
+    columns:
+      - name: decade
+        tests: [unique]
+  - name: mart_return_periods
+    tests:
+      - unique_combination: {arguments: {columns: [period, level]}}
+  - name: mart_estate_exposure
+    columns:
+      - name: geoid
+        tests: [unique, not_null]
+  - name: mart_storm_population
+    tests:
+      - unique_combination: {arguments: {columns: [storm_id, island]}}
+  - name: mart_active_threats
+    columns:
+      - name: storm_id
+        tests: [unique]
+  - name: mart_alerts
+    columns:
+      - name: alert_key
+        tests: [unique, not_null]
