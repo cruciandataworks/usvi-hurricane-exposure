@@ -328,9 +328,11 @@ Step 3 is "tolerant": if NHC is unreachable the run carries on. Any failure from
 1. Downloads the lake from a GitHub release called `lake` (one `lake.tar.gz`).
 2. Runs the unit tests and the pipeline.
 3. Uploads the lake again.
-4. Once a day, commits the dashboard data. GitHub pauses schedules in repositories with no commits for 60 days.
+4. Once a day (the first automatic run of the day, or any manual run), commits the dashboard data. GitHub pauses schedules in repositories with no commits for 60 days.
 5. Uploads the dashboard to Hostinger, if the FTP secrets exist.
 6. On any failure, opens or updates a "refresh failed" issue.
+
+**A backup for GitHub's scheduler.** GitHub can take a long time to start firing schedules in a new repository, and it sometimes drops runs. So every run that was not started by the schedule ends with a small second job, `next-run`. That job waits until 3 hours after the run began and then starts the next run itself (`chained=true`). It first checks whether any newer run has started in the meantime (a scheduled run, a manual run or another chain); if one has, it stops. That keeps only one chain going, and once the schedule fires, the chain ends on its own. The wait runs in its own job so it never blocks the refresh. It uses runner time, which is free in a public repository. Set the repository variable `CHAIN_RUNS` to `false` to turn the backup off.
 
 ### Setup checklist in GitHub
 
